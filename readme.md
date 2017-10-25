@@ -1,4 +1,3 @@
-# README Masterarbeit Julian Geppert
 ## Dependencies:
 * python (2.7)
 * pip (9.01)
