@@ -58,9 +58,7 @@ Used to train a network after generation of a dataset and converting it to TFRec
 
 Example usage:
 ```
-python train_rotation.py [Train-Record] [Test-Record] --num_train
-[traincount] --num_test [testcount] --num_epochs 25 
---batch_size 50 --learning_rate 0.001 --nntype [networktype] --save_path trainedModel
+python train_rotation.py [Train-Record] [Test-Record] --num_train [traincount] --num_test [testcount] --num_epochs 25 --batch_size 50 --learning_rate 0.001 --nntype [networktype] --save_path trainedModel
 ```
 ### Prediction
 Prediction using a pretrained model.
@@ -68,8 +66,7 @@ Prediction using a pretrained model.
 Example usage:
 ```
 cd trainedModel
-python predict_rotation.py [Test-Record] --num_samples [predictcount] 
---nntype [networktype]
+python predict_rotation.py [Test-Record] --num_samples [predictcount] --nntype [networktype]
 ```
 
 ## Rating-Network
