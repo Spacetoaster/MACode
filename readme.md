@@ -1,5 +1,5 @@
 # README Masterarbeit Julian Geppert
-##Dependencies:
+## Dependencies:
 * python (2.7)
 * pip (9.01)
 	* numpy (1.12.1)
@@ -14,7 +14,7 @@
 * OpenEXR
 * OpenCV 3
 
-##Dateien/Ordner:
+## Dateien/Ordner:
 * `rotation_network/` enthält alle Dateien zum Training/Prediction/Konvertieren des MVCNN-Ansatzes
 * `rotation_network/networks/` enthält die Implementierungen der MVCNN-Netze
 * `rating_network/` enthält alle Dateien zum Training/Prediction/Konvertieren des Bewertungsnetzes
