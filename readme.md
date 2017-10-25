@@ -1,3 +1,7 @@
+## About:
+This repository contains most of the code i wrote during my master thesis.
+The objective was to evaluate how optimal views on medical 3d-models can be learned using convolutional neural networks (CNNs). In order to use 3d-models as an input for the models an approach of a multi-view neural network has been used inspired by the approach of Su et al (http://vis-www.cs.umass.edu/mvcnn/).
+
 ## Dependencies:
 * python (2.7)
 * pip (9.01)
@@ -13,76 +17,76 @@
 * OpenEXR
 * OpenCV 3
 
-## Dateien/Ordner:
-* `rotation_network/` enthält alle Dateien zum Training/Prediction/Konvertieren des MVCNN-Ansatzes
-* `rotation_network/networks/` enthält die Implementierungen der MVCNN-Netze
-* `rating_network/` enthält alle Dateien zum Training/Prediction/Konvertieren des Bewertungsnetzes
-* `rating_network/networks/` enthält die Implementierungen der Rating-Netze
-* `tfhelper/` enthält Helper für das Training und die Auswertung der Quaternionen
-* `utility/modelgeneration` enthält Scripts zur Generierung der Blendermodelle
-* `utility/datageneration` enthält Scripts zur Generierung der Datensätze (Rendering)
-* `utility/imagerating` enthält die Implementierung der Bewertungsfunktion
+## Filetree:
+* `rotation_network/` contains all files which are used for training/prediction/converting for the MVCNN-based approach
+* `rotation_network/networks/` contains the implementations of the MVCNN-networks 
+* `rating_network/` contains all files for training/prediciton/converting of the rating-network
+* `rating_network/networks/` contains the implementations of the rating-networks
+* `tfhelper/` contains helper functions for training and evaluation of rotation-quaternions
+* `utility/modelgeneration` contains scripts for generation of the 3d-models in blender
+* `utility/datageneration` contains scripts for generation/rendering of data used for training
+* `utility/imagerating` contains the implementations of the rating function
 
-## Modellgenerierung
-Wird verwendet um Kombinationen der Lebermodelle und Tumormodelle herzustellen.
-Dazu wird ein Ordner angegeben, welcher die Lebermodelle enthält und eine Datei, welche alle Tumormodelle beinhaltet. Leber-Meshes der Blender-Dateien müssen mit `liver` und Tumor-Meshes mit `tumor` beginnen.
+## Generation of Blender-Models
+This can be used to create combinations of models of the liver and the tumors based on the liver-dataset provided by IRCAD (http://ircad.fr/research/3d-ircadb-01/).
+The script uses a folder as input, which contains the liver-models as a blender-file and a file containing all the tumor-models.
 
-Benutzung:
+Example usage:
 ```
 blender --background --python utility/modelgeneration/blender_gen_livers.py
--- [Leber-Ordner] [AusgabeOrdner] [Tumor-Datei] [Leberanzahl]
+-- [liver-folder] [output-folder] [tumor-file] [livercount]
 ```
 
 ## Rendering / Datengenerierung
-Wird für die Generierung des Datensatzes verwendet.
+Used to generate a dataset by rendering the blender models.
 
-Benutzung (Beispiel):
-Rendert einen Datensatz mit 3 virtuellen Kameras, einer Wahl der Rotationsachse über ein Icosphere mit 162 Kanten und jeweils 10 Rotationen pro Achse mit einer Kamera-Auflösung ovn 100x100.
+Example usage:
+Creates a dataset by rendering models with 3 virtual cameras, while choosing the rotation-axes of the blender-model by using the vertices of an icosphere mesh. There will be 10 rotations per vertex and a resolution of 100x100 pixels is used.
 ```
 blender --background --python utility/datageneration/render.py --blender_files
-[LeberOrdner] --rendered_dir [DatensatzOrdner] --num_rotations 10 --icosphere 3 
+[liverfolder] --rendered_dir [datasetfolder] --num_rotations 10 --icosphere 3 
 --res_x 100 --res_y 100 --num_cams 3
 ```
 
-Die Datensätze müssen daraufhin in TFRecords konvertiert werden, wobei hierfür für das Rotationsnetz/Bewertungsnetz getrennte Scripte (convert.py) verwendet werden.
+Subsequently the dataset can be converted to a TFRecord-File by using the convert.py script:
 
-Beispiel:
+Example usage:
 ```
-python convert.py --data_dir [DatensatzPfad] --shuffle True
+python convert.py --data_dir [dataset-path] --shuffle True
 ```
 
-## Rotationsnetz
+## Rotation-Network (MVCNN)
 ### Training
-Training des Netzes nach Generierung des Datensatzes und Konvertierung.
+Used to train a network after generation of a dataset and converting it to TFRecord-format.
 
-Beispiel:
+Example usage:
 ```
 python train_rotation.py [Train-Record] [Test-Record] --num_train
-[AnzahlTrainingsbeispiele] --num_test [AnzahlTestbeispiele] --num_epochs 25 
---batch_size 50 --learning_rate 0.001 --nntype [Netztyp] --save_path trainedModel
+[traincount] --num_test [testcount] --num_epochs 25 
+--batch_size 50 --learning_rate 0.001 --nntype [networktype] --save_path trainedModel
 ```
 ### Prediction
-Prediction mittels eines vortrainierten Netzes.
+Prediction using a pretrained model.
 
-Beispiel:
+Example usage:
 ```
 cd trainedModel
-python predict_rotation.py [Test-Record] --num_samples [AnzahlBeispiele] 
---nntype [Netztyp]
+python predict_rotation.py [Test-Record] --num_samples [predictcount] 
+--nntype [networktype]
 ```
 
-## Bewertungsnetz
+## Rating-Network
 ### Training
 Beispiel:
 ```
-python train_rating.py [Train-Record] [Test-Record] --num_train [AnzahlTrain]
---num_test [AnzahlTest] --num_epochs 25 --batch_size 50 --learning_rate 0.001
---nntype [Netztyp] --save_path trainedModel
+python train_rating.py [Train-Record] [Test-Record] --num_train [traincount]
+--num_test [testcount] --num_epochs 25 --batch_size 50 --learning_rate 0.001
+--nntype [networktype] --save_path trainedModel
 ```
 
 ### Prediction
 ```
 cd trainedModel
 python predict_rating.py [Test-Record] --num_samples [AnzahlBeispiele]
---nntype [Netztyp]
+--nntype [networktype]
 ```
