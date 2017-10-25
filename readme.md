@@ -33,19 +33,16 @@ The script uses a folder as input, which contains the liver-models as a blender-
 
 Example usage:
 ```
-blender --background --python utility/modelgeneration/blender_gen_livers.py
--- [liver-folder] [output-folder] [tumor-file] [livercount]
+blender --background --python utility/modelgeneration/blender_gen_livers.py -- [liver-folder] [output-folder] [tumor-file] [livercount]
 ```
 
-## Rendering / Datengenerierung
+## Rendering / Datageneration
 Used to generate a dataset by rendering the blender models.
 
 Example usage:
 Creates a dataset by rendering models with 3 virtual cameras, while choosing the rotation-axes of the blender-model by using the vertices of an icosphere mesh. There will be 10 rotations per vertex and a resolution of 100x100 pixels is used.
 ```
-blender --background --python utility/datageneration/render.py --blender_files
-[liverfolder] --rendered_dir [datasetfolder] --num_rotations 10 --icosphere 3 
---res_x 100 --res_y 100 --num_cams 3
+blender --background --python utility/datageneration/render.py --blender_files [liverfolder] --rendered_dir [datasetfolder] --num_rotations 10 --icosphere 3 --res_x 100 --res_y 100 --num_cams 3
 ```
 
 Subsequently the dataset can be converted to a TFRecord-File by using the convert.py script:
@@ -77,16 +74,13 @@ python predict_rotation.py [Test-Record] --num_samples [predictcount]
 
 ## Rating-Network
 ### Training
-Beispiel:
+Example usage:
 ```
-python train_rating.py [Train-Record] [Test-Record] --num_train [traincount]
---num_test [testcount] --num_epochs 25 --batch_size 50 --learning_rate 0.001
---nntype [networktype] --save_path trainedModel
+python train_rating.py [Train-Record] [Test-Record] --num_train [traincount] --num_test [testcount] --num_epochs 25 --batch_size 50 --learning_rate 0.001 --nntype [networktype] --save_path trainedModel
 ```
 
 ### Prediction
 ```
 cd trainedModel
-python predict_rating.py [Test-Record] --num_samples [AnzahlBeispiele]
---nntype [networktype]
+python predict_rating.py [Test-Record] --num_samples [predictcount] --nntype [networktype]
 ```
